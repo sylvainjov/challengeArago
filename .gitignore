@@ -20,6 +20,26 @@
 *.tar.gz
 *.rar
 
+# Gradle files
+.gradle/
+build/
+out/
+
+# Ignore Protobuf generated files
+generated/
+*.pb.go
+*.pb.java
+
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# VSCode specific files
+.vscode/                   
+.history/   
+
+# Miscellaneous
+*.tmp
+*.bak
+*.swp
