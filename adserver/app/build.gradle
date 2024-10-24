@@ -9,6 +9,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'com.google.protobuf' version '0.8.15'
 }
 
 repositories {
@@ -23,23 +24,49 @@ dependencies {
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:31.1-jre'
 
-    // Dépendances gRPC
-    implementation 'io.grpc:grpc-netty-shaded:1.42.1'  // Transport gRPC
-    implementation 'io.grpc:grpc-protobuf:1.42.1'  // Protobuf pour la sérialisation
-    implementation 'io.grpc:grpc-stub:1.42.1'  // Stub gRPC
-
-    // Dépendance Redis
-    implementation 'redis.clients:jedis:4.0.1'  // Client Redis pour Java
+    // gRPC
+    implementation 'io.grpc:grpc-netty-shaded:1.42.1'  
+    implementation 'io.grpc:grpc-protobuf:1.42.1'  
+    implementation 'io.grpc:grpc-stub:1.42.1'  
+    implementation 'com.google.protobuf:protobuf-java:3.19.1'
+    // Redis
+    implementation 'redis.clients:jedis:4.0.1'  
 }
 
-// Conversion des fichiers proto à des fichiers Java
-task generateProto {
-    doLast {
-        exec {
-            commandLine 'protoc', '--java_out=src/main/java', '--proto_path=proto', 'proto/ad_service.proto'
+sourceSets {
+    main {
+        proto {
+            srcDir 'src/main/proto' 
+        }
+        java {
+            srcDirs 'build/generated/source/proto/main/java'
         }
     }
 }
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.19.1"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.42.1'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc {}
+            }
+            task.builtins {
+                java {
+                    outputSubDir = 'java'
+                }
+            }
+        }
+    }
+}
+
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {
@@ -57,3 +84,4 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
