@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+service ImpressionService {
+    rpc IncrementImpression (ImpressionRequest) returns (ImpressionResponse);
+}
+
+message ImpressionRequest {
+    string ad_id = 1;
+}
+
+message ImpressionResponse {
+    int64 impression_count = 1;
+}
